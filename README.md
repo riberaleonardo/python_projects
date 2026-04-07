@@ -1,2 +1,2 @@
-# python_project2
-Automated Data Pipeline
+# python_project
+Projects for Introduction to Python
