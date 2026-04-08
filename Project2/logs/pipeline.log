@@ -1,12 +1,6 @@
-2026-04-08 16:15:24,278 [INFO] Fetching weather data for Tallahassee
-2026-04-08 16:15:25,259 [INFO] Fetching weather data for Miami
-2026-04-08 16:15:26,084 [INFO] Fetching weather data for Orlando
-2026-04-08 16:15:26,883 [INFO] Fetching weather data for Tampa
-2026-04-08 16:15:27,738 [INFO] Fetching weather data for Jacksonville
-2026-04-08 16:15:28,590 [INFO] Saved 5 records to CSV and SQLite.
-2026-04-08 16:16:44,206 [INFO] Fetching weather data for Tallahassee
-2026-04-08 16:16:45,119 [INFO] Fetching weather data for Miami
-2026-04-08 16:16:45,936 [INFO] Fetching weather data for Orlando
-2026-04-08 16:16:46,728 [INFO] Fetching weather data for Tampa
-2026-04-08 16:16:47,540 [INFO] Fetching weather data for Jacksonville
-2026-04-08 16:16:48,378 [INFO] Saved 5 records to CSV and SQLite.
+2026-04-08 16:35:22,453 [INFO] Fetching weather data for Tallahassee
+2026-04-08 16:35:23,286 [INFO] Fetching weather data for Miami
+2026-04-08 16:35:24,073 [INFO] Fetching weather data for Orlando
+2026-04-08 16:35:24,956 [INFO] Fetching weather data for Tampa
+2026-04-08 16:35:25,714 [INFO] Fetching weather data for Jacksonville
+2026-04-08 16:35:26,566 [INFO] Saved 5 records to CSV and SQLite.
