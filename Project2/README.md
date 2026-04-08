@@ -3,7 +3,7 @@
 ## Group Members
 
 * Leonardo Ribera - lr21k@fsu.edu
-* Brandon Pina - 
+* Brandon Pina -  bp22c@fsu.edu
 
 ## Project Description
 
