@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<!-- Navbar for homepage -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 rounded">
+    <div class="container-fluid">
+        <span class="navbar-brand fw-bold">Django Web App</span>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#homeNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="homeNavbar">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Project 1</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Project 2</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Card -->
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card home-card">
+            <div class="card-body text-center">
+                <h1 class="mb-3">Welcome</h1>
+                <p class="text-muted mb-4">
+                    Simple Homepage
+                </p>
+
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="#" class="btn btn-primary">Project 1</a>
+                    <a href="#" class="btn btn-outline-secondary">Project 2</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
