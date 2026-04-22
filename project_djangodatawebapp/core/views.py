@@ -1,3 +1,7 @@
+import json
+import numpy as np
+import pandas as pd
+
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -67,3 +71,110 @@ def record_delete(request, pk):
         return redirect("record_list")
 
     return render(request, "core/confirm_delete.html", {"record": record})
+
+
+def analytics(request):
+    qs = TripRecord.objects.values(
+        "start_date",
+        "end_date",
+        "train_type",
+        "price",
+    )
+
+    df = pd.DataFrame(list(qs))
+
+    if df.empty:
+        context = {
+            "chart_one_json": json.dumps({
+                "type": "bar",
+                "labels": [],
+                "datasets": [{"label": "Trips by Hour", "data": []}],
+            }),
+            "chart_two_json": json.dumps({
+                "type": "doughnut",
+                "labels": [],
+                "datasets": [{"label": "Average Trip Duration", "data": []}],
+            }),
+            "summary_rows": [],
+        }
+        return render(request, "core/analytics.html", context)
+
+    # Parse datetimes
+    df["start_date"] = pd.to_datetime(df["start_date"], errors="coerce")
+    df["end_date"] = pd.to_datetime(df["end_date"], errors="coerce")
+
+    # Drop rows missing required dates
+    df = df.dropna(subset=["start_date", "end_date"])
+
+    # Derive hour from start_date
+    df["hour"] = df["start_date"].dt.hour
+
+    # Compute trip duration in hours
+    df["trip_duration_hours"] = (
+        (df["end_date"] - df["start_date"]).dt.total_seconds() / 3600
+    )
+
+    # Clean numeric fields
+    df["trip_duration_hours"] = pd.to_numeric(df["trip_duration_hours"], errors="coerce")
+    df["price"] = pd.to_numeric(df["price"], errors="coerce")
+
+    #chart 1
+    hour_counts = df.groupby("hour").size().sort_index()
+
+    chart_one = {
+        "type": "bar",
+        "labels": [str(x) for x in hour_counts.index.tolist()],
+        "datasets": [
+            {
+                "label": "Trips by Hour",
+                "data": hour_counts.values.tolist(),
+            }
+        ],
+    }
+
+#   chart 2
+    duration_by_train_type = (
+        df.dropna(subset=["train_type", "trip_duration_hours"])
+          .groupby("train_type")["trip_duration_hours"]
+          .mean()
+          .sort_values(ascending=False)
+    )
+
+    chart_two = {
+        "type": "doughnut",
+        "labels": duration_by_train_type.index.tolist(),
+        "datasets": [
+            {
+                "label": "Average Trip Duration (Hours)",
+                "data": [round(x, 2) for x in duration_by_train_type.values.tolist()],
+            }
+        ],
+    }
+
+# summarize tables
+    duration_series = df["trip_duration_hours"].dropna()
+    price_series = df["price"].dropna()
+
+    summary_rows = [
+        {
+            "field": "Trip Duration (Hours)",
+            "count": int(duration_series.count()),
+            "mean": round(float(duration_series.mean()), 2),
+            "min": round(float(duration_series.min()), 2),
+            "max": round(float(duration_series.max()), 2),
+        },
+        {
+            "field": "Price",
+            "count": int(price_series.count()),
+            "mean": round(float(price_series.mean()), 2),
+            "min": round(float(price_series.min()), 2),
+            "max": round(float(price_series.max()), 2),
+        },
+    ]
+
+    context = {
+        "chart_one_json": json.dumps(chart_one),
+        "chart_two_json": json.dumps(chart_two),
+        "summary_rows": summary_rows,
+    }
+    return render(request, "core/analytics.html", context)

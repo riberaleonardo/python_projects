@@ -1,0 +1,135 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Analytics{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <h1 class="mb-4">Analytics Dashboard</h1>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Trips by Hour</h2>
+                    <div style="min-height: 320px;">
+                        <canvas id="chartOne"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p>The plot shows the amount of trips taken depending on the hour of day.There is clear peak near the end of the day and dips in the middle and at the start of the day and late at night. This makes sense because most people work and have to commute in the mornings and most people return home before it gets too late  </p>
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Average Trip Duration by Train Type</h2>
+                    
+                    <div style="min-height: 320px;">
+                        <canvas id="chartTwo"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p>As seen in the figure, flexible fare tickets are not on average significantly more expensive than regular promo. However, compared to Promo + tickets, they are more expensive, on average (40+ euros). This suggests that pricing flexibility does come at a premium, with promo fares offering lowest prices but likely with less premium conditions. </p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h2 class="h5 mb-3">Summary Statistics</h2>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Count</th>
+                            <th>Mean</th>
+                            <th>Min</th>
+                            <th>Max</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in summary_rows %}
+                            <tr>
+                                <td>{{ row.field }}</td>
+                                <td>{{ row.count }}</td>
+                                <td>{{ row.mean }}</td>
+                                <td>{{ row.min }}</td>
+                                <td>{{ row.max }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5">No summary data available.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const chartOneData = JSON.parse('{{ chart_one_json|escapejs }}');
+    const chartTwoData = JSON.parse('{{ chart_two_json|escapejs }}');
+
+    // BAR CHART (Trips by Hour)
+    new Chart(document.getElementById('chartOne'), {
+        type: chartOneData.type,
+        data: {
+            labels: chartOneData.labels,
+            datasets: chartOneData.datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                },
+                title: {
+                    display: true,
+                    text: 'Trips by Hour'
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Hour of Day'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Number of Trips'
+                    },
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // DOUGHNUT CHART (Avg Duration by Train Type)
+    new Chart(document.getElementById('chartTwo'), {
+        type: chartTwoData.type,
+        data: {
+            labels: chartTwoData.labels,
+            datasets: chartTwoData.datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                title: {
+                    display: true,
+                    text: 'Average Trip Duration by Train Type (Hours)'
+                }
+            }
+        }
+    });
+</script>
+{%endblock%}
