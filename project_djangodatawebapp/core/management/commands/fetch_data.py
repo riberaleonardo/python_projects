@@ -9,11 +9,11 @@ from core.models import City, DataRun, WeatherObservation
 BASE_URL = "https://api.open-meteo.com/v1/forecast"
 
 CITIES = {
-    "Tallahassee": (30.4383, -84.2807),
-    "Miami": (25.7617, -80.1918),
-    "Orlando": (28.5383, -81.3792),
-    "Tampa": (27.9506, -82.4572),
-    "Jacksonville": (30.3322, -81.6557),
+    "MADRID": (40.4168, -3.7038),
+    "SEVILLA": (37.3891, -5.9845),
+    "BARCELONA": (41.3874, 2.1686),
+    "VALENCIA": (39.4699, -0.3763),
+    "PONFERRADA": (42.5466, -6.5962),
 }
 
 
@@ -49,17 +49,11 @@ class Command(BaseCommand):
                 api_time_raw = current_weather.get("time")
                 temperature_c = current_weather.get("temperature")
                 windspeed_kmh = current_weather.get("windspeed")
-                winddirection_deg = current_weather.get("winddirection")
-                weathercode = current_weather.get("weathercode")
-                is_day = current_weather.get("is_day")
 
                 if (
                     api_time_raw is None
                     or temperature_c is None
                     or windspeed_kmh is None
-                    or winddirection_deg is None
-                    or weathercode is None
-                    or is_day is None
                 ):
                     self.stderr.write(f"Incomplete weather data for {city_name}")
                     skipped_count += 1
@@ -84,9 +78,6 @@ class Command(BaseCommand):
                         "collected_at": collected_at,
                         "temperature_c": temperature_c,
                         "windspeed_kmh": windspeed_kmh,
-                        "winddirection_deg": winddirection_deg,
-                        "weathercode": weathercode,
-                        "is_day": bool(is_day),
                         "source": "api",
                     },
                 )
