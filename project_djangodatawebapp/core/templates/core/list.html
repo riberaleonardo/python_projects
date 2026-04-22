@@ -1,0 +1,60 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+    <h1>Trip Records</h1>
+
+    {% if page_obj %}
+        <table border="1" cellpadding="6">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Origin</th>
+                    <th>Destination</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Train Type</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in page_obj %}
+                    <tr>
+                        <td>{{ record.pk }}</td>
+                        <td>{{ record.origin }}</td>
+                        <td>{{ record.destination }}</td>
+                        <td>{{ record.start_date }}</td>
+                        <td>{{ record.end_date }}</td>
+                        <td>{{ record.train_type }}</td>
+                        <td>{{ record.price }}</td>
+                        <td>
+                            <a href="{% url 'record_detail' record.pk %}">View</a>
+                            <a href="{% url 'record_edit' record.pk %}">Edit</a>
+                            <a href="{% url 'record_delete' record.pk %}">Delete</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8">No records found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="margin-top: 20px;">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            {% endif %}
+
+            <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            {% endif %}
+        </div>
+    {% else %}
+        <p>No records available.</p>
+    {% endif %}
+{% endblock %}
