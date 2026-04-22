@@ -1,57 +1,69 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator
 
 
-# Model 1: City
-class City(models.Model):
+class Station(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    latitude = models.FloatField()
-    longitude = models.FloatField()
 
     def __str__(self):
         return self.name
 
 
-# Model 2: DataRun (tracks CSV vs API imports)
 class DataRun(models.Model):
     SOURCE_CHOICES = [
-        ('csv', 'CSV Import'),
-        ('api', 'API Fetch'),
+        ("csv", "CSV Import"),
+        ("api", "API Fetch"),
     ]
 
     source = models.CharField(max_length=10, choices=SOURCE_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.source} run @ {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+        return f"{self.source} run @ {self.created_at:%Y-%m-%d %H:%M}"
 
 
-# Model 3: WeatherRecord
-class WeatherRecord(models.Model):
-    city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='records')
-    data_run = models.ForeignKey(DataRun, on_delete=models.SET_NULL, null=True, blank=True)
+class TripRecord(models.Model):
+    TRAIN_TYPE_CHOICES = [
+        ("AVE", "AVE"),
+        ("AV City", "AV City"),
+        ("ALVIA", "ALVIA"),
+        ("INTERCITY", "INTERCITY"),
+        ("EUROMED", "EUROMED"),
+        ("REGIONAL", "REGIONAL"),
+        ("MD-LD", "MD-LD"),
+    ]
 
-    record_time = models.DateTimeField()
-
-    temperature_c = models.FloatField()
-    windspeed_kmh = models.FloatField(validators=[MinValueValidator(0)])
-    winddirection_deg = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(360)]
+    origin = models.ForeignKey(
+        Station,
+        on_delete=models.CASCADE,
+        related_name="departing_trips",
+    )
+    destination = models.ForeignKey(
+        Station,
+        on_delete=models.CASCADE,
+        related_name="arriving_trips",
+    )
+    data_run = models.ForeignKey(
+        DataRun,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
 
-    weathercode = models.IntegerField()
-    is_day = models.BooleanField()
+    insert_date = models.DateTimeField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
 
-    source = models.CharField(
-        max_length=10,
-        choices=[('csv', 'CSV Import'), ('api', 'API Fetch')]
-    )
+    train_type = models.CharField(max_length=30, choices=TRAIN_TYPE_CHOICES)
+    price = models.DecimalField(max_digits=8, decimal_places=2, validators=[MinValueValidator(0)])
+    train_class = models.CharField(max_length=50)
+    fare = models.CharField(max_length=50)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-record_time']
-        unique_together = ['city', 'record_time', 'source']
+        ordering = ["-start_date"]
+        unique_together = ["origin", "destination", "start_date", "end_date", "train_type", "fare", "price"]
 
     def __str__(self):
-        return f"{self.city.name} @ {self.record_time}"
+        return f"{self.origin} → {self.destination} ({self.start_date:%Y-%m-%d %H:%M})"
