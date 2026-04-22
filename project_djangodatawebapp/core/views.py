@@ -1,13 +1,14 @@
+from io import StringIO
+
+from django.contrib.admin.views.decorators import staff_member_required
+from django.core.management import call_command
 from django.core.paginator import Paginator
+from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import TripRecordForm
 from .models import TripRecord
 
-from io import StringIO
-from django.contrib.admin.views.decorators import staff_member_required
-from django.core.management import call_command
-from django.http import HttpResponseNotAllowed
 
 def home(request):
     trip_count = TripRecord.objects.count()
@@ -41,12 +42,20 @@ def record_add(request):
     if request.method == "POST":
         form = TripRecordForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect("record_list")
+            record = form.save()
+            return redirect("record_detail", pk=record.pk)
     else:
         form = TripRecordForm()
 
-    return render(request, "core/form.html", {"form": form, "title": "Add Record"})
+    return render(
+        request,
+        "core/form.html",
+        {
+            "form": form,
+            "title": "Add Trip Record",
+            "submit_text": "Create Record",
+        },
+    )
 
 
 def record_edit(request, pk):
@@ -55,12 +64,20 @@ def record_edit(request, pk):
     if request.method == "POST":
         form = TripRecordForm(request.POST, instance=record)
         if form.is_valid():
-            form.save()
+            record = form.save()
             return redirect("record_detail", pk=record.pk)
     else:
         form = TripRecordForm(instance=record)
 
-    return render(request, "core/form.html", {"form": form, "title": "Edit Record"})
+    return render(
+        request,
+        "core/form.html",
+        {
+            "form": form,
+            "title": "Edit Trip Record",
+            "submit_text": "Save Changes",
+        },
+    )
 
 
 def record_delete(request, pk):
@@ -71,6 +88,7 @@ def record_delete(request, pk):
         return redirect("record_list")
 
     return render(request, "core/confirm_delete.html", {"record": record})
+
 
 @staff_member_required
 def fetch_data_view(request):
@@ -85,3 +103,7 @@ def fetch_data_view(request):
         "core/fetch_result.html",
         {"command_output": output.getvalue()},
     )
+
+
+def custom_404(request, exception):
+    return render(request, "core/404.html", status=404)
