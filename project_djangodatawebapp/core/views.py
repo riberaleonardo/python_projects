@@ -4,6 +4,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .forms import TripRecordForm
 from .models import TripRecord
 
+from io import StringIO
+from django.contrib.admin.views.decorators import staff_member_required
+from django.core.management import call_command
+from django.http import HttpResponseNotAllowed
 
 def home(request):
     trip_count = TripRecord.objects.count()
@@ -67,3 +71,17 @@ def record_delete(request, pk):
         return redirect("record_list")
 
     return render(request, "core/confirm_delete.html", {"record": record})
+
+@staff_member_required
+def fetch_data_view(request):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+
+    output = StringIO()
+    call_command("fetch_data", stdout=output)
+
+    return render(
+        request,
+        "core/fetch_result.html",
+        {"command_output": output.getvalue()},
+    )
