@@ -3,6 +3,7 @@
 {% block content %}
     <h1>Trip Record Detail</h1>
 
+    <h2>Trip Information</h2>
     <p><strong>Origin:</strong> {{ record.origin }}</p>
     <p><strong>Destination:</strong> {{ record.destination }}</p>
     <p><strong>Insert Date:</strong> {{ record.insert_date }}</p>
@@ -12,6 +13,36 @@
     <p><strong>Price:</strong> {{ record.price }}</p>
     <p><strong>Train Class:</strong> {{ record.train_class }}</p>
     <p><strong>Fare:</strong> {{ record.fare }}</p>
+
+    <hr>
+
+    <h2>Current Weather in {{record.origin}}</h2>
+    {% if current_origin_weather %}
+        <p><strong>Observed At:</strong> {{ current_origin_weather.api_time }}</p>
+        <p><strong>Temperature:</strong> {{ current_origin_weather.temperature_c }} °C</p>
+        <p><strong>Wind Speed:</strong> {{ current_origin_weather.windspeed_kmh }} km/h</p>
+        <p><strong>Wind Direction:</strong> {{ current_origin_weather.winddirection_deg }}°</p>
+        <p><strong>Weather Code:</strong> {{ current_origin_weather.weathercode }}</p>
+        <p><strong>Daytime:</strong> {{ current_origin_weather.is_day }}</p>
+    {% else %}
+        <p>No current weather available for the origin city.</p>
+    {% endif %}
+
+    <hr>
+
+    <h2>Current Weather in {{record.destination}}</h2>
+    {% if current_destination_weather %}
+        <p><strong>Observed At:</strong> {{ current_destination_weather.api_time }}</p>
+        <p><strong>Temperature:</strong> {{ current_destination_weather.temperature_c }} °C</p>
+        <p><strong>Wind Speed:</strong> {{ current_destination_weather.windspeed_kmh }} km/h</p>
+        <p><strong>Wind Direction:</strong> {{ current_destination_weather.winddirection_deg }}°</p>
+        <p><strong>Weather Code:</strong> {{ current_destination_weather.weathercode }}</p>
+        <p><strong>Daytime:</strong> {{ current_destination_weather.is_day }}</p>
+    {% else %}
+        <p>No current weather available for the destination city.</p>
+    {% endif %}
+
+    <hr>
 
     <p>
         <a href="{% url 'record_edit' record.pk %}">Edit</a> |
