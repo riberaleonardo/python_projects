@@ -1,4 +1,4 @@
-Group Members: Brandon Pina and Leonardo Ribeira
+Group Members: Brandon Pina and Leonardo Ribera
 Emails: bp22c@fsu.edu  lr21k@fsu.edu
 Title: Django Data Web App
 Description:
