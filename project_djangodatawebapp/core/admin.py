@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import City, DataRun, WeatherRecord
+from .models import Station, DataRun, TripRecord
 
 
-@admin.register(City)
-class CityAdmin(admin.ModelAdmin):
-    list_display = ("name", "latitude", "longitude")
+@admin.register(Station)
+class StationAdmin(admin.ModelAdmin):
+    list_display = ("name",)
     search_fields = ("name",)
 
 
@@ -14,8 +14,17 @@ class DataRunAdmin(admin.ModelAdmin):
     list_filter = ("source",)
 
 
-@admin.register(WeatherRecord)
-class WeatherRecordAdmin(admin.ModelAdmin):
-    list_display = ("city", "record_time", "temperature_c", "windspeed_kmh", "source")
-    list_filter = ("city", "source")
-    search_fields = ("city__name",)
+@admin.register(TripRecord)
+class TripRecordAdmin(admin.ModelAdmin):
+    list_display = (
+        "origin",
+        "destination",
+        "start_date",
+        "end_date",
+        "train_type",
+        "price",
+        "train_class",
+        "fare",
+    )
+    list_filter = ("train_type", "train_class", "fare", "origin", "destination")
+    search_fields = ("origin__name", "destination__name")
