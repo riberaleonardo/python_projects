@@ -7,7 +7,7 @@ from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import TripRecordForm
-from .models import TripRecord
+from .models import TripRecord, WeatherObservation
 
 
 def home(request):
@@ -29,13 +29,29 @@ def record_list(request):
 
     return render(request, "core/list.html", {"page_obj": page_obj})
 
-
 def record_detail(request, pk):
     record = get_object_or_404(
         TripRecord.objects.select_related("origin", "destination"),
         pk=pk,
     )
-    return render(request, "core/detail.html", {"record": record})
+
+    current_origin_weather = WeatherObservation.objects.filter(
+        city__name=record.origin.name
+    ).order_by("-api_time").first()
+
+    current_destination_weather = WeatherObservation.objects.filter(
+        city__name=record.destination.name
+    ).order_by("-api_time").first()
+
+    return render(
+        request,
+        "core/detail.html",
+        {
+            "record": record,
+            "current_origin_weather": current_origin_weather,
+            "current_destination_weather": current_destination_weather,
+        },
+    )
 
 
 def record_add(request):
