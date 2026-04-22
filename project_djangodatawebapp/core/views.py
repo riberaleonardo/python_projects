@@ -1,6 +1,69 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-# Create your views here.
+from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404, redirect, render
+
+from .forms import TripRecordForm
+from .models import TripRecord
+
 
 def home(request):
-    return render(request, 'core/home.html')
+    trip_count = TripRecord.objects.count()
+    recent_trips = TripRecord.objects.select_related("origin", "destination").all()[:5]
+
+    context = {
+        "trip_count": trip_count,
+        "recent_trips": recent_trips,
+    }
+    return render(request, "core/home.html", context)
+
+
+def record_list(request):
+    records = TripRecord.objects.select_related("origin", "destination").all()
+    paginator = Paginator(records, 20)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "core/list.html", {"page_obj": page_obj})
+
+
+def record_detail(request, pk):
+    record = get_object_or_404(
+        TripRecord.objects.select_related("origin", "destination"),
+        pk=pk,
+    )
+    return render(request, "core/detail.html", {"record": record})
+
+
+def record_add(request):
+    if request.method == "POST":
+        form = TripRecordForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("record_list")
+    else:
+        form = TripRecordForm()
+
+    return render(request, "core/form.html", {"form": form, "title": "Add Record"})
+
+
+def record_edit(request, pk):
+    record = get_object_or_404(TripRecord, pk=pk)
+
+    if request.method == "POST":
+        form = TripRecordForm(request.POST, instance=record)
+        if form.is_valid():
+            form.save()
+            return redirect("record_detail", pk=record.pk)
+    else:
+        form = TripRecordForm(instance=record)
+
+    return render(request, "core/form.html", {"form": form, "title": "Edit Record"})
+
+
+def record_delete(request, pk):
+    record = get_object_or_404(TripRecord, pk=pk)
+
+    if request.method == "POST":
+        record.delete()
+        return redirect("record_list")
+
+    return render(request, "core/confirm_delete.html", {"record": record})
