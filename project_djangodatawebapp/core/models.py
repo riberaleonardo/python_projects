@@ -67,3 +67,41 @@ class TripRecord(models.Model):
 
     def __str__(self):
         return f"{self.origin} → {self.destination} ({self.start_date:%Y-%m-%d %H:%M})"
+
+
+class City(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+    def __str__(self):
+        return self.name
+
+
+class WeatherObservation(models.Model):
+    city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="observations")
+    data_run = models.ForeignKey(DataRun, on_delete=models.SET_NULL, null=True, blank=True)
+
+    api_time = models.DateTimeField()
+    collected_at = models.DateTimeField()
+
+    temperature_c = models.FloatField()
+    windspeed_kmh = models.FloatField(validators=[MinValueValidator(0)])
+    winddirection_deg = models.IntegerField()
+    weathercode = models.IntegerField()
+    is_day = models.BooleanField()
+
+    source = models.CharField(
+        max_length=10,
+        choices=[("api", "API Fetch")],
+        default="api",
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-api_time"]
+        unique_together = ["city", "api_time"]
+
+    def __str__(self):
+        return f"{self.city.name} @ {self.api_time}"

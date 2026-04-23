@@ -1,6 +1,39 @@
 {% extends "core/base.html" %}
 
 {% block content %}
-<h1>Welcome to the Django Weather App</h1>
-<p>The frontend is now connected.</p>
+
+<h1>Project 3: Full-Stack Data Web Application</h1>
+
+<hr>
+
+<h2>Project Overview</h2>
+<p>
+    This web application combines a structured train transportation dataset with live weather data
+    from an external API into one unified Django system.
+</p>
+<p>
+    The core dataset contains train trip records across Spain, including origin and destination
+    cities, departure and arrival times, train type, pricing, and fare categories.
+</p>
+<p>
+    The API integration connects directly to this dataset through the same cities used in the train
+    records. Current weather is fetched for those cities and stored in the database, allowing the
+    application to display live city conditions alongside train trip information.
+</p>
+
+<hr>
+
+<h2>Navigation</h2>
+
+<ul>
+    <li><a href="{% url 'record_list' %}">View All Records</a></li>
+    <li><a href="{% url 'record_add' %}">Create New Record</a></li>
+</ul>
+
+<hr>
+
+<p>
+    To edit or delete records, navigate to the records list and select a specific entry.
+</p>
+
 {% endblock %}

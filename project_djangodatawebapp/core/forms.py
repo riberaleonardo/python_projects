@@ -5,4 +5,14 @@ from .models import TripRecord
 class TripRecordForm(forms.ModelForm):
     class Meta:
         model = TripRecord
-        fields = "__all__"
+        fields = [
+            "origin",
+            "destination",
+            "insert_date",
+            "start_date",
+            "end_date",
+            "train_type",
+            "price",
+            "train_class",
+            "fare",
+        ]
