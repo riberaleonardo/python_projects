@@ -8,32 +8,17 @@
 
 <h2>Project Overview</h2>
 <p>
-    This web application integrates two prior projects into a single full-stack Django system.
-    It combines a structured dataset from Project 1 with a live API data pipeline from Project 2.
+    This web application combines a structured train transportation dataset with live weather data
+    from an external API into one unified Django system.
 </p>
-
-<hr>
-
-<h2>Project 1: Train Dataset</h2>
 <p>
-    The core dataset consists of train trip records across Spain, including origin and destination
+    The core dataset contains train trip records across Spain, including origin and destination
     cities, departure and arrival times, train type, pricing, and fare categories.
 </p>
 <p>
-    This dataset is stored in a relational database using Django models and can be viewed,
-    created, updated, and deleted through the application interface.
-</p>
-
-<hr>
-
-<h2>Project 2: API Integration</h2>
-<p>
-    The application also includes a live data ingestion feature that fetches real-time data from
-    an external API using a Django management command.
-</p>
-<p>
-    This demonstrates how external data sources can be integrated into an existing database
-    using automated pipelines and ORM-based storage.
+    The API integration connects directly to this dataset through the same cities used in the train
+    records. Current weather is fetched for those cities and stored in the database, allowing the
+    application to display live city conditions alongside train trip information.
 </p>
 
 <hr>

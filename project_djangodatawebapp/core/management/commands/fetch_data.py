@@ -52,42 +52,46 @@ class Command(BaseCommand):
                 data = response.json()
 
                 current_weather = data.get("current_weather")
-                if current_weather:
-                    api_time_raw = current_weather.get("time")
-                    temperature_c = current_weather.get("temperature")
-                    windspeed_kmh = current_weather.get("windspeed")
-                    winddirection_deg = current_weather.get("winddirection")
-                    weathercode = current_weather.get("weathercode")
-                    is_day = current_weather.get("is_day")
+                if not current_weather:
+                    self.stderr.write(f"No current_weather field found for {city_name}")
+                    skipped_count += 1
+                    continue
 
-                    if (
-                        api_time_raw is not None
-                        and temperature_c is not None
-                        and windspeed_kmh is not None
-                        and winddirection_deg is not None
-                        and weathercode is not None
-                        and is_day is not None
-                    ):
-                        api_time = datetime.fromisoformat(api_time_raw)
-                        api_time = timezone.make_aware(
-                            api_time,
-                            timezone.get_current_timezone(),
-                        )
+                api_time_raw = current_weather.get("time")
+                temperature_c = current_weather.get("temperature")
+                windspeed_kmh = current_weather.get("windspeed")
 
-                        _, created = WeatherObservation.objects.update_or_create(
-                            city=city,
-                            api_time=api_time,
-                            defaults={
-                                "data_run": data_run,
-                                "collected_at": collected_at,
-                                "temperature_c": temperature_c,
-                                "windspeed_kmh": windspeed_kmh,
-                                "winddirection_deg": winddirection_deg,
-                                "weathercode": weathercode,
-                                "is_day": bool(is_day),
-                                "source": "api",
-                            },
-                        )
+                if (
+                    api_time_raw is None
+                    or temperature_c is None
+                    or windspeed_kmh is None
+                ):
+                    self.stderr.write(f"Incomplete weather data for {city_name}")
+                    skipped_count += 1
+                    continue
+
+                api_time = datetime.fromisoformat(api_time_raw)
+                api_time = timezone.make_aware(api_time, timezone.get_current_timezone())
+
+                city, _ = City.objects.get_or_create(
+                    name=city_name,
+                    defaults={
+                        "latitude": latitude,
+                        "longitude": longitude,
+                    },
+                )
+
+                observation, created = WeatherObservation.objects.update_or_create(
+                    city=city,
+                    api_time=api_time,
+                    defaults={
+                        "data_run": data_run,
+                        "collected_at": collected_at,
+                        "temperature_c": temperature_c,
+                        "windspeed_kmh": windspeed_kmh,
+                        "source": "api",
+                    },
+                )
 
                         if created:
                             current_created += 1
