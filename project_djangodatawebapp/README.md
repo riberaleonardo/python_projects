@@ -1,40 +1,126 @@
-Group Members: Brandon Pina and Leonardo Ribera
-Emails: bp22c@fsu.edu  lr21k@fsu.edu
-Title: Django Data Web App
-Description:
-....
+# Django Data Web App
 
-Data Set link: 
-https://www.kaggle.com/code/qusaybtoush1990/spain-public-transportation
+## Authors
+- **Brandon Pina** — bp22c@fsu.edu  
+- **Leonardo Ribera** — lr21k@fsu.edu  
 
-Application Features:
-pages... 
-pages...
+---
 
+## Overview
+This project is a Django-based web application that builds on previous CIS4930 assignments.
 
-Setup Instructions:
-git clone repo
-pip install - r requirements.txt
-....
+The application analyzes a dataset of train rides in Spain and enhances it by integrating real-time weather data using geographic coordinates. Each trip record can be viewed alongside corresponding weather conditions for both departure and destination locations.
 
+---
 
-Screenshots:
-3 at least (homepage, list view, analytics dashboard )
+## Data Sources
 
+### Dataset
+- Spain Public Transportation Dataset (Kaggle):  
+  https://www.kaggle.com/code/qusaybtoush1990/spain-public-transportation  
 
-manage.py check --deploy
+### API
+- Open-Meteo Weather API:  
+  https://open-meteo.com/  
 
+- Provides free weather data in JSON format  
+- No authentication required  
 
+---
 
-Checklist: 
-1.
-2.  .1 - in progress
-    .2 - / homepage very basic 
-    .3 - nav bar with navigation lists and name missing hamburger
-    .4
-    .5
-    .6
-3. .1 Readme in progress
-    .2 STructure in progress
-    .3 
-    .4
+## Features
+
+### Core Pages
+- **Home**
+  - Overview of the project
+  - Navigation to all sections
+
+- **Records**
+  - Displays table of all train trips
+
+- **View**
+  - Detailed view of a single trip
+  - Includes weather data for both locations
+
+- **Add**
+  - Create a new record
+
+- **Edit**
+  - Modify an existing record
+
+- **Delete**
+  - Remove a record
+
+- **Analytics**
+  - Visualizations based on dataset
+  - Includes graphs for trip patterns
+
+- **Admin**
+  - Django admin panel for database and user management
+
+---
+
+## Setup Instructions
+
+### 1. Clone Repository
+```bash
+git clone <repo-url>
+cd <project-folder>
+```
+
+### 2. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Environment Variables
+Create a `.env` file in the root directory:
+
+```env
+SECRET_KEY=your-random-secret-key
+DEBUG=True
+ALLOWED_HOSTS=127.0.0.1,localhost
+```
+
+Generate a secret key:
+```bash
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+
+---
+
+### 4. Run Migrations
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+---
+
+### 5. Load and Prepare Data
+```bash
+python manage.py seed_data
+python manage.py fetch_data
+```
+
+---
+
+### 6. Run Development Server
+```bash
+python manage.py runserver
+```
+
+---
+
+## Screenshots
+Include at least:
+- Homepage
+- Records/List View
+- Analytics Dashboard
+
+---
+
+## Notes
+- This project uses server-side rendering via Django templates.
+- Weather data is fetched dynamically using the Open-Meteo API.
+- Designed for educational purposes and dataset exploration.
