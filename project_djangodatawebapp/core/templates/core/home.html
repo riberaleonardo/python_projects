@@ -25,11 +25,11 @@
 
 <h2>Navigation</h2>
 
-<ul>
-    <li><a href="{% url 'record_list' %}">View All Records</a></li>
-    <li><a href="{% url 'record_add' %}">Create New Record</a></li>
-</ul>
-
+<div class="d-flex gap-2 flex-wrap">
+    <a href="{% url 'record_list' %}" class="btn btn-primary">View All Records</a>
+    <a href="{% url 'record_add' %}" class="btn btn-outline-secondary">Create New Record</a>
+    <a href="{% url 'analytics' %}" class="btn btn-dark">Analytics</a>
+</div>
 <hr>
 
 <p>

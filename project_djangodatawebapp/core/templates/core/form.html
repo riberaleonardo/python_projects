@@ -6,7 +6,7 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">{{ submit_text }}</button>
+        <button type="submit" class="btn btn-primary">{{ submit_text|default:title }}</button>
     </form>
 
     <p><a href="{% url 'record_list' %}">Back to List</a></p>
