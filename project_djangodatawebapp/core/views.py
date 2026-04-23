@@ -1,14 +1,11 @@
-<<<<<<< HEAD
 import json
 import numpy as np
 import pandas as pd
 
-=======
 from io import StringIO
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.management import call_command
->>>>>>> origin/main
 from django.core.paginator import Paginator
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
@@ -113,7 +110,6 @@ def record_delete(request, pk):
     return render(request, "core/confirm_delete.html", {"record": record})
 
 
-<<<<<<< HEAD
 def analytics(request):
     qs = TripRecord.objects.values(
         "start_date",
@@ -219,7 +215,6 @@ def analytics(request):
         "summary_rows": summary_rows,
     }
     return render(request, "core/analytics.html", context)
-=======
 @staff_member_required
 def fetch_data_view(request):
     if request.method != "POST":
@@ -237,4 +232,3 @@ def fetch_data_view(request):
 
 def custom_404(request, exception):
     return render(request, "core/404.html", status=404)
->>>>>>> origin/main
