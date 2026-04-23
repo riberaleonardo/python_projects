@@ -6,7 +6,7 @@ from django.utils import timezone
 
 from core.models import City, DataRun, WeatherObservation
 
-BASE_URL = "https://api.open-meteo.com/v1/forecast"
+CURRENT_BASE_URL = "https://api.open-meteo.com/v1/forecast"
 
 CITIES = {
     "MADRID": (40.4168, -3.7038),
@@ -18,25 +18,36 @@ CITIES = {
 
 
 class Command(BaseCommand):
-    help = "Fetch current weather data from Open-Meteo and save it to the database"
+    help = "Fetch current weather data and store it"
 
     def handle(self, *args, **options):
         data_run = DataRun.objects.create(source="api")
-        created_count = 0
-        updated_count = 0
+
+        current_created = 0
+        current_updated = 0
+        historical_created = 0
         skipped_count = 0
 
         collected_at = timezone.now()
 
-        for city_name, (latitude, longitude) in CITIES.items():
-            params = {
-                "latitude": latitude,
-                "longitude": longitude,
+
+        for city_name, (lat, lon) in CITIES.items():
+            city, _ = City.objects.get_or_create(
+                name=city_name,
+                defaults={"latitude": lat, "longitude": lon},
+            )
+
+
+            # CURRENT WEATHER
+
+            current_params = {
+                "latitude": lat,
+                "longitude": lon,
                 "current_weather": "true",
             }
 
             try:
-                response = requests.get(BASE_URL, params=params, timeout=10)
+                response = requests.get(CURRENT_BASE_URL, params=current_params, timeout=10)
                 response.raise_for_status()
                 data = response.json()
 
@@ -82,23 +93,24 @@ class Command(BaseCommand):
                     },
                 )
 
-                if created:
-                    created_count += 1
+                        if created:
+                            current_created += 1
+                        else:
+                            current_updated += 1
                 else:
-                    updated_count += 1
-
-                self.stdout.write(f"Fetched weather for {city_name}")
+                    self.stderr.write(f"No current weather data for {city_name}")
+                    skipped_count += 1
 
             except requests.exceptions.Timeout:
-                self.stderr.write(f"Request timed out for {city_name}")
+                self.stderr.write(f"Current weather request timed out for {city_name}")
                 skipped_count += 1
             except requests.exceptions.RequestException as exc:
-                self.stderr.write(f"Request error for {city_name}: {exc}")
+                self.stderr.write(f"Current weather request error for {city_name}: {exc}")
                 skipped_count += 1
             except Exception as exc:
-                self.stderr.write(f"Unexpected error for {city_name}: {exc}")
+                self.stderr.write(f"Unexpected current weather error for {city_name}: {exc}")
                 skipped_count += 1
 
-        self.stdout.write(self.style.SUCCESS(f"Created {created_count} weather observations"))
-        self.stdout.write(self.style.SUCCESS(f"Updated {updated_count} weather observations"))
-        self.stdout.write(self.style.WARNING(f"Skipped {skipped_count} cities"))
+        self.stdout.write(self.style.SUCCESS(f"Created {current_created} current weather records"))
+        self.stdout.write(self.style.SUCCESS(f"Updated {current_updated} current weather records"))
+        self.stdout.write(self.style.WARNING(f"Skipped {skipped_count} requests"))
