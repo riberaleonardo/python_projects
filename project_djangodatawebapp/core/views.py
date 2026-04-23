@@ -36,24 +36,6 @@ def record_detail(request, pk):
     )
 
     current_origin_weather = WeatherObservation.objects.filter(
-        city__name=record.origin.name
-    ).order_by("-api_time").first()
-
-    current_destination_weather = WeatherObservation.objects.filter(
-        city__name=record.destination.name
-    ).order_by("-api_time").first()
-
-    return render(
-        request,
-        "core/detail.html",
-        {
-            "record": record,
-            "current_origin_weather": current_origin_weather,
-            "current_destination_weather": current_destination_weather,
-        },
-    )
-
-    current_origin_weather = WeatherObservation.objects.filter(
         city__name__iexact=record.origin.name
     ).order_by("-api_time").first()
 
