@@ -113,10 +113,10 @@ python manage.py runserver
 ---
 
 ## Screenshots
-Include at least:
-- Homepage
-- Records/List View
-- Analytics Dashboard
+<img width="1195" height="584" alt="Screenshot 2026-04-23 at 1 15 58 PM" src="https://github.com/user-attachments/assets/708751df-ac53-42d3-90ce-795ba9a8dfe1" />
+<img width="1171" height="756" alt="Screenshot 2026-04-23 at 1 16 19 PM" src="https://github.com/user-attachments/assets/cc91db8a-4b42-496b-80b5-9106d674cbf5" />
+<img width="747" height="722" alt="Screenshot 2026-04-23 at 1 16 37 PM" src="https://github.com/user-attachments/assets/f92db503-6ae5-4be7-9a69-b6c38bc24534" />
+
 
 ---
 
